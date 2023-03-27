@@ -34,7 +34,7 @@ describe("/api/reviews/:review_id", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body).toBeInstanceOf(Object);
-        expect(body).toHaveProperty("review_id", expect.any(Number));
+        expect(body.review_id).toBe(2)
         expect(body).toHaveProperty("title", expect.any(String));
         expect(body).toHaveProperty("designer", expect.any(String));
         expect(body).toHaveProperty("owner", expect.any(String));
