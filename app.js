@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
-const { getCategories, getReviewById } = require("./controllers/categories.controllers");
+const { getCategories } = require("./controllers/categories.controllers");
+const { getReviewById } = require('./controllers/reviews.controllers')
 const { handle404Statuses, handle500Statuses, handle400Statuses, handleCustomErrors } = require('./controllers/error-handling.controllers')
 
 app.use(express.json());
