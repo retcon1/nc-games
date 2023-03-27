@@ -4,8 +4,6 @@ const { getCategories } = require("./controllers/categories.controllers");
 const { getReviewById } = require('./controllers/reviews.controllers')
 const { handle404Statuses, handle500Statuses, handle400Statuses, handleCustomErrors } = require('./controllers/error-handling.controllers')
 
-app.use(express.json());
-
 app.get("/api/categories", getCategories)
 
 app.get('/api/reviews/:review_id', getReviewById)
