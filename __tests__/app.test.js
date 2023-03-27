@@ -26,3 +26,27 @@ describe("/api/categories", () => {
     return request(app).get("/api/cetagories").expect(404);
   });
 });
+
+describe("/api/reviews - all reviews", () => {
+  it("GET 200 - should respond with an array of review objects with all the appropriate properties", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body)
+        expect(body).toBeInstanceOf(Array);
+        expect(body).toHaveLength(13);
+        body.forEach((review) => {
+          expect(review).toHaveProperty("review_id", expect.any(Number));
+          expect(review).toHaveProperty("title", expect.any(String));
+          expect(review).toHaveProperty("designer", expect.any(String));
+          expect(review).toHaveProperty("owner", expect.any(String));
+          expect(review).toHaveProperty("review_img_url", expect.any(String));
+          expect(review).toHaveProperty("review_body", expect.any(String));
+          expect(review).toHaveProperty("category", expect.any(String));
+          expect(review).toHaveProperty("created_at", expect.any(String));
+          expect(review).toHaveProperty("votes", expect.any(Number));
+        });
+      });
+  });
+});
