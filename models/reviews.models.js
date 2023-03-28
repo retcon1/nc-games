@@ -20,7 +20,7 @@ exports.fetchReviewById = (review_id) => {
 exports.fetchAllReviews = () => {
   const reviews = db.query(
     `
-    SELECT reviews.*,
+    SELECT reviews.review_id, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer,
     COUNT(comments.comment_id) AS comment_count
     FROM reviews
     LEFT JOIN comments
