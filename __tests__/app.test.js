@@ -3,7 +3,7 @@ const app = require("../app");
 const data = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
-const sorted = require('jest-sorted')
+const sorted = require("jest-sorted");
 
 beforeEach(() => seed(data));
 
@@ -34,16 +34,17 @@ describe("/api/reviews/:review_id", () => {
       .get("/api/reviews/2")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toBeInstanceOf(Object);
-        expect(body.review_id).toBe(2)
-        expect(body).toHaveProperty("title", expect.any(String));
-        expect(body).toHaveProperty("designer", expect.any(String));
-        expect(body).toHaveProperty("owner", expect.any(String));
-        expect(body).toHaveProperty("review_img_url", expect.any(String));
-        expect(body).toHaveProperty("review_body", expect.any(String));
-        expect(body).toHaveProperty("category", expect.any(String));
-        expect(body).toHaveProperty("created_at", expect.any(String));
-        expect(body).toHaveProperty("votes", expect.any(Number));
+        const { review } = body;
+        expect(review).toBeInstanceOf(Object);
+        expect(review.review_id).toBe(2);
+        expect(review).toHaveProperty("title", expect.any(String));
+        expect(review).toHaveProperty("designer", expect.any(String));
+        expect(review).toHaveProperty("owner", expect.any(String));
+        expect(review).toHaveProperty("review_img_url", expect.any(String));
+        expect(review).toHaveProperty("review_body", expect.any(String));
+        expect(review).toHaveProperty("category", expect.any(String));
+        expect(review).toHaveProperty("created_at", expect.any(String));
+        expect(review).toHaveProperty("votes", expect.any(Number));
       });
   });
   it("404 - responds with an error if given an ID that does not exist", () => {
@@ -70,7 +71,7 @@ describe("/api/reviews", () => {
       .get("/api/reviews")
       .expect(200)
       .then(({ body }) => {
-        const {reviews} = body
+        const { reviews } = body;
         expect(reviews).toBeInstanceOf(Array);
         expect(reviews).toHaveLength(13);
         reviews.forEach((review) => {
@@ -83,9 +84,9 @@ describe("/api/reviews", () => {
           expect(review).toHaveProperty("created_at", expect.any(String));
           expect(review).toHaveProperty("votes", expect.any(Number));
           expect(review).toHaveProperty("comment_count", expect.any(Number));
-          if (review.review_id === 3) expect(review.comment_count).toBe(3)
+          if (review.review_id === 3) expect(review.comment_count).toBe(3);
         });
-        expect(reviews).toBeSortedBy('created_at', {descending: true})
+        expect(reviews).toBeSortedBy("created_at", { descending: true });
       });
   });
   it("404 - responds with a not found error if there is a typo in the path", () => {
