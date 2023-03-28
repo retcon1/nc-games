@@ -18,12 +18,12 @@ app.get("/api/reviews/:review_id", getReviewById);
 
 app.get("/api/reviews", getAllReviews);
 
-app.use(handle404Errors);
+app.use(handle404Errors)
 
-app.use(handle500Errors);
+app.use(handle500Errors)
 
-app.use(handlePsqlErrors);
+app.use(handlePsqlErrors)
 
-app.use(handleCustomErrors);
+app.use(handleCustomErrors)
 
 module.exports = app;

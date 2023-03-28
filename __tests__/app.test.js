@@ -34,17 +34,16 @@ describe("/api/reviews/:review_id", () => {
       .get("/api/reviews/2")
       .expect(200)
       .then(({ body }) => {
-        const {review} = body
-        expect(review).toBeInstanceOf(Object);
-        expect(review.review_id).toBe(2);
-        expect(review).toHaveProperty("title", expect.any(String));
-        expect(review).toHaveProperty("designer", expect.any(String));
-        expect(review).toHaveProperty("owner", expect.any(String));
-        expect(review).toHaveProperty("review_img_url", expect.any(String));
-        expect(review).toHaveProperty("review_body", expect.any(String));
-        expect(review).toHaveProperty("category", expect.any(String));
-        expect(review).toHaveProperty("created_at", expect.any(String));
-        expect(review).toHaveProperty("votes", expect.any(Number));
+        expect(body).toBeInstanceOf(Object);
+        expect(body.review_id).toBe(2)
+        expect(body).toHaveProperty("title", expect.any(String));
+        expect(body).toHaveProperty("designer", expect.any(String));
+        expect(body).toHaveProperty("owner", expect.any(String));
+        expect(body).toHaveProperty("review_img_url", expect.any(String));
+        expect(body).toHaveProperty("review_body", expect.any(String));
+        expect(body).toHaveProperty("category", expect.any(String));
+        expect(body).toHaveProperty("created_at", expect.any(String));
+        expect(body).toHaveProperty("votes", expect.any(Number));
       });
   });
   it("404 - responds with an error if given an ID that does not exist", () => {
