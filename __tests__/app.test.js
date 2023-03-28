@@ -69,6 +69,7 @@ describe("/api/reviews", () => {
       .get("/api/reviews")
       .expect(200)
       .then(({ body }) => {
+        // console.log(body)
         expect(body).toBeInstanceOf(Array);
         expect(body).toHaveLength(13);
         body.forEach((review) => {
@@ -81,6 +82,8 @@ describe("/api/reviews", () => {
           expect(review).toHaveProperty("category", expect.any(String));
           expect(review).toHaveProperty("created_at", expect.any(String));
           expect(review).toHaveProperty("votes", expect.any(Number));
+          expect(review).toHaveProperty("comment_count", expect.any(Number));
+          if (review.review_id === 3) expect(review.comment_count).toBe(3)
         });
       });
   });
