@@ -4,7 +4,7 @@ exports.fetchCategories = () => {
   return db
     .query(
       `
-    SELECT * FROM categories
+    SELECT * FROM categories;
     `
     )
     .then((result) => {
@@ -12,3 +12,5 @@ exports.fetchCategories = () => {
       return categories;
     });
 };
+
+

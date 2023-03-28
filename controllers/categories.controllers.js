@@ -1,4 +1,6 @@
-const { fetchCategories } = require("../models/categories.models");
+const {
+  fetchCategories
+} = require("../models/categories.models");
 
 exports.getCategories = (req, res, next) => {
   fetchCategories()
@@ -9,3 +11,5 @@ exports.getCategories = (req, res, next) => {
       next(err);
     });
 };
+
+
