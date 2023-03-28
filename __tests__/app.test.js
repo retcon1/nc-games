@@ -34,7 +34,7 @@ describe("/api/reviews/:review_id", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body).toBeInstanceOf(Object);
-        expect(body.review_id).toBe(2)
+        expect(body.review_id).toBe(2);
         expect(body).toHaveProperty("title", expect.any(String));
         expect(body).toHaveProperty("designer", expect.any(String));
         expect(body).toHaveProperty("owner", expect.any(String));
@@ -49,7 +49,7 @@ describe("/api/reviews/:review_id", () => {
     return request(app)
       .get("/api/reviews/9999")
       .expect(404)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body).toEqual({ msg: "ID Not Found" });
       });
   });
@@ -57,7 +57,7 @@ describe("/api/reviews/:review_id", () => {
     return request(app)
       .get("/api/reviews/notAnId")
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body).toEqual({ msg: "Invalid ID" });
       });
   });
@@ -69,7 +69,6 @@ describe("/api/reviews", () => {
       .get("/api/reviews")
       .expect(200)
       .then(({ body }) => {
-        console.log(body)
         expect(body).toBeInstanceOf(Array);
         expect(body).toHaveLength(13);
         body.forEach((review) => {
@@ -85,7 +84,7 @@ describe("/api/reviews", () => {
         });
       });
   });
-  it.only("404 - responds with a not found error if there is a typo in the path", () => {
+  it("404 - responds with a not found error if there is a typo in the path", () => {
     return request(app).get("/api/reveiws").expect(404);
   });
 });
