@@ -3,6 +3,7 @@ const app = require("../app");
 const data = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
+const sorted = require('jest-sorted')
 
 beforeEach(() => seed(data));
 
@@ -49,7 +50,7 @@ describe("/api/reviews/:review_id", () => {
     return request(app)
       .get("/api/reviews/9999")
       .expect(404)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body).toEqual({ msg: "ID Not Found" });
       });
   });
@@ -57,8 +58,37 @@ describe("/api/reviews/:review_id", () => {
     return request(app)
       .get("/api/reviews/notAnId")
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body).toEqual({ msg: "Invalid ID" });
       });
+  });
+});
+
+describe("/api/reviews", () => {
+  it("GET 200 - should respond with an array of review objects with all the appropriate properties", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        const {reviews} = body
+        expect(reviews).toBeInstanceOf(Array);
+        expect(reviews).toHaveLength(13);
+        reviews.forEach((review) => {
+          expect(review).toHaveProperty("review_id", expect.any(Number));
+          expect(review).toHaveProperty("title", expect.any(String));
+          expect(review).toHaveProperty("designer", expect.any(String));
+          expect(review).toHaveProperty("owner", expect.any(String));
+          expect(review).toHaveProperty("review_img_url", expect.any(String));
+          expect(review).toHaveProperty("category", expect.any(String));
+          expect(review).toHaveProperty("created_at", expect.any(String));
+          expect(review).toHaveProperty("votes", expect.any(Number));
+          expect(review).toHaveProperty("comment_count", expect.any(Number));
+          if (review.review_id === 3) expect(review.comment_count).toBe(3)
+        });
+        expect(reviews).toBeSortedBy('created_at', {descending: true})
+      });
+  });
+  it("404 - responds with a not found error if there is a typo in the path", () => {
+    return request(app).get("/api/reveiws").expect(404);
   });
 });
