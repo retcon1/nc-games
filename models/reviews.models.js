@@ -26,10 +26,6 @@ exports.fetchReviewComments = (review_id) => {
       [review_id]
     )
     .then((result) => {
-      if (result.rowCount === 0) {
-        return Promise.reject({ msg: "ID Not Found", status: 404 });
-      } else {
-        return result.rows;
-      }
+      return result.rows;
     });
 };

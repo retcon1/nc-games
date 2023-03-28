@@ -1,7 +1,17 @@
 const db = require("../db/connection");
 
-exports.checkEntityExists = (entity) => {
-    return db.query(`
-    SELECT * FROM $1 WHERE comment_id = $2
-    `)
-}
+exports.checkForReview = (id) => {
+  return db
+    .query(
+      `
+    SELECT * FROM reviews WHERE review_id = $1
+    `,
+      [id]
+    )
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return Promise.reject({ status: 404, msg: "Review Not Found" });
+      }
+      else return true
+    });
+};

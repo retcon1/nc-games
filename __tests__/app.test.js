@@ -69,8 +69,8 @@ describe("/api/reviews/review_id/comments", () => {
       .get("/api/reviews/2/comments")
       .expect(200)
       .then(({ body }) => {
-        const {comments} = body
-        console.log(comments)
+        const { comments } = body;
+        console.log(comments);
         expect(comments).toBeInstanceOf(Array);
         expect(comments).toHaveLength(3);
         comments.forEach((comment) => {
@@ -78,18 +78,19 @@ describe("/api/reviews/review_id/comments", () => {
           expect(comment).toHaveProperty("votes", expect.any(Number));
           expect(comment).toHaveProperty("author", expect.any(String));
           expect(comment).toHaveProperty("created_at", expect.any(String));
-          expect(comment.review_id).toBe(2)
+          expect(comment.review_id).toBe(2);
         });
       });
   });
-  // it("GET 200 - responds with an empty array if the given ID exists but has no comments", () => {
-  //   return request(app)
-  //     .get("/api/reviews/1/comments")
-  //     .expect(200)
-  //     .then(({ body }) => {
-  //       expect(body).toEqual([]);
-  //     });
-  // });
+  it("GET 200 - responds with an empty array if the given ID exists but has no comments", () => {
+    return request(app)
+      .get("/api/reviews/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toEqual([]);
+      });
+  });
   it("ERROR 400 - responds with an error if given an ID that is not a number", () => {
     return request(app)
       .get("/api/reviews/notAnId/comments")
@@ -103,7 +104,7 @@ describe("/api/reviews/review_id/comments", () => {
       .get("/api/reviews/9999/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "ID Not Found" });
+        expect(body).toEqual({ msg: "Review Not Found" });
       });
   });
 });
