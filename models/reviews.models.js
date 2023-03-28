@@ -20,25 +20,19 @@ exports.fetchReviewById = (review_id) => {
 exports.fetchAllReviews = () => {
   const reviews = db.query(
     `
-    SELECT * FROM reviews
-    ORDER BY created_at DESC
+    SELECT reviews.*,
+    COUNT(comments.comment_id) AS comment_count
+    FROM reviews
+    LEFT JOIN comments
+    ON reviews.review_id = comments.review_id
+    GROUP BY reviews.review_id
+    ORDER BY created_at DESC;
     `
   );
-  const comments = db.query(
-    `
-    SELECT * FROM comments
-    `
-  );
-  return Promise.all([reviews, comments]).then((result) => {
-    const reviews = result[0].rows;
-    const comments = result[1].rows;
-    reviews.map((review) => {
-      let count = 0;
-      for (let i = 0; i < comments.length; i++) {
-        if (comments[i].review_id === review.review_id) count++;
-      }
-      review.comment_count = count;
-    });
+  return reviews.then((result) => {
+    const reviews = result.rows;
+    //can map through to turn every string comment_count into a number
+    reviews.map(review => review.comment_count = +review.comment_count)
     return reviews;
   });
 };
