@@ -2,17 +2,17 @@ const express = require("express");
 const app = express();
 const { getCategories } = require("./controllers/categories.controllers");
 const { getReviewById } = require('./controllers/reviews.controllers')
-const { handle404Statuses, handle500Statuses, handle400Statuses, handleCustomErrors } = require('./controllers/error-handling.controllers')
+const { handle404Errors, handle500Errors, handleCustomErrors, handlePsqlErrors } = require('./controllers/error-handling.controllers')
 
 app.get("/api/categories", getCategories)
 
 app.get('/api/reviews/:review_id', getReviewById)
 
-app.use(handle404Statuses)
+app.use(handle404Errors)
 
-app.use(handle500Statuses)
+app.use(handle500Errors)
 
-app.use(handle400Statuses)
+app.use(handlePsqlErrors)
 
 app.use(handleCustomErrors)
 

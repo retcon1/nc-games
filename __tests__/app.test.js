@@ -45,12 +45,12 @@ describe("/api/reviews/:review_id", () => {
         expect(body).toHaveProperty("votes", expect.any(Number));
       });
   });
-  it("400 - responds with an error if given an ID that does not exist", () => {
+  it("404 - responds with an error if given an ID that does not exist", () => {
     return request(app)
       .get("/api/reviews/9999")
-      .expect(400)
+      .expect(404)
       .then(({body}) => {
-        expect(body).toEqual({ msg: "Invalid ID" });
+        expect(body).toEqual({ msg: "ID Not Found" });
       });
   });
   it("400 - responds with an error if given an ID that is not a number", () => {
@@ -58,7 +58,7 @@ describe("/api/reviews/:review_id", () => {
       .get("/api/reviews/notAnId")
       .expect(400)
       .then(({body}) => {
-        expect(body).toEqual({ msg: "ID must be a number" });
+        expect(body).toEqual({ msg: "Invalid ID" });
       });
   });
 });
