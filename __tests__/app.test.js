@@ -70,14 +70,15 @@ describe("/api/reviews/review_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
-        console.log(comments);
         expect(comments).toBeInstanceOf(Array);
         expect(comments).toHaveLength(3);
         comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id", expect.any(Number));
           expect(comment).toHaveProperty("body", expect.any(String));
           expect(comment).toHaveProperty("votes", expect.any(Number));
           expect(comment).toHaveProperty("author", expect.any(String));
           expect(comment).toHaveProperty("created_at", expect.any(String));
+          expect(comment).toHaveProperty("review_id", expect.any(Number));
           expect(comment.review_id).toBe(2);
         });
       });
@@ -91,20 +92,20 @@ describe("/api/reviews/review_id/comments", () => {
         expect(comments).toEqual([]);
       });
   });
-  it("ERROR 400 - responds with an error if given an ID that is not a number", () => {
-    return request(app)
-      .get("/api/reviews/notAnId/comments")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body).toEqual({ msg: "Invalid ID" });
-      });
-  });
   it("ERROR 404 - responds with an error if given an ID that does not exist", () => {
     return request(app)
       .get("/api/reviews/9999/comments")
       .expect(404)
       .then(({ body }) => {
         expect(body).toEqual({ msg: "Review Not Found" });
+      });
+  });
+  it("ERROR 400 - responds with an error if given an ID that is not a number", () => {
+    return request(app)
+      .get("/api/reviews/notAnId/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid ID" });
       });
   });
 });
