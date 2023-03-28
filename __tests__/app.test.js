@@ -69,9 +69,11 @@ describe("/api/reviews/review_id/comments", () => {
       .get("/api/reviews/2/comments")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toBeInstanceOf(Array);
-        expect(body).toHaveLength(3);
-        body.forEach((comment) => {
+        const {comments} = body
+        console.log(comments)
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments).toHaveLength(3);
+        comments.forEach((comment) => {
           expect(comment).toHaveProperty("body", expect.any(String));
           expect(comment).toHaveProperty("votes", expect.any(Number));
           expect(comment).toHaveProperty("author", expect.any(String));
@@ -80,12 +82,12 @@ describe("/api/reviews/review_id/comments", () => {
         });
       });
   });
-  // it("GET 200 - responds with an error if given an ID that is not a number", () => {
+  // it("GET 200 - responds with an empty array if the given ID exists but has no comments", () => {
   //   return request(app)
-  //     .get("/api/reviews/notAnId/comments")
-  //     .expect(400)
+  //     .get("/api/reviews/1/comments")
+  //     .expect(200)
   //     .then(({ body }) => {
-  //       expect(body).toEqual({ msg: "Invalid ID" });
+  //       expect(body).toEqual([]);
   //     });
   // });
   it("ERROR 400 - responds with an error if given an ID that is not a number", () => {
