@@ -69,7 +69,6 @@ describe("/api/reviews/review_id/comments", () => {
       .get("/api/reviews/2/comments")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         expect(body).toBeInstanceOf(Array);
         expect(body).toHaveLength(3);
         body.forEach((comment) => {
@@ -79,6 +78,30 @@ describe("/api/reviews/review_id/comments", () => {
           expect(comment).toHaveProperty("created_at", expect.any(String));
           expect(comment.review_id).toBe(2)
         });
+      });
+  });
+  // it("GET 200 - responds with an error if given an ID that is not a number", () => {
+  //   return request(app)
+  //     .get("/api/reviews/notAnId/comments")
+  //     .expect(400)
+  //     .then(({ body }) => {
+  //       expect(body).toEqual({ msg: "Invalid ID" });
+  //     });
+  // });
+  it("ERROR 400 - responds with an error if given an ID that is not a number", () => {
+    return request(app)
+      .get("/api/reviews/notAnId/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid ID" });
+      });
+  });
+  it("ERROR 404 - responds with an error if given an ID that does not exist", () => {
+    return request(app)
+      .get("/api/reviews/9999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "ID Not Found" });
       });
   });
 });
