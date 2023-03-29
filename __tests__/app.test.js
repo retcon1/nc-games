@@ -81,6 +81,7 @@ describe("/api/reviews/review_id/comments", () => {
           expect(comment).toHaveProperty("review_id", expect.any(Number));
           expect(comment.review_id).toBe(2);
         });
+        expect(comments).toBeSortedBy("created_at", { descending: true });
       });
   });
   it("GET 200 - responds with an empty array if the given ID exists but has no comments", () => {
