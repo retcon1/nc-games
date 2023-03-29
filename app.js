@@ -5,6 +5,7 @@ const {
   getReviewById,
   getAllReviews,
   getReviewComments,
+  postComment,
 } = require("./controllers/reviews.controllers");
 const {
   handle404Errors,
@@ -13,20 +14,24 @@ const {
   handlePsqlErrors,
 } = require("./controllers/error-handling.controllers");
 
+app.use(express.json())
+
 app.get("/api/categories", getCategories);
 
 app.get("/api/reviews/:review_id", getReviewById);
 
 app.get("/api/reviews", getAllReviews);
 
-app.get('/api/reviews/:review_id/comments', getReviewComments)
+app.get("/api/reviews/:review_id/comments", getReviewComments);
 
-app.use(handle404Errors)
+app.post("/api/reviews/:review_id/comments", postComment);
 
-app.use(handle500Errors)
+app.use(handle404Errors);
 
-app.use(handlePsqlErrors)
+app.use(handle500Errors);
 
-app.use(handleCustomErrors)
+app.use(handlePsqlErrors);
+
+app.use(handleCustomErrors);
 
 module.exports = app;
