@@ -4,8 +4,8 @@ exports.fetchReviewById = (review_id) => {
   return db
     .query(
       `
-    SELECT * FROM reviews WHERE review_id = $1;
-    `,
+      SELECT * FROM reviews WHERE review_id = $1;
+      `,
       [review_id]
     )
     .then((result) => {
@@ -14,6 +14,19 @@ exports.fetchReviewById = (review_id) => {
       } else {
         return result.rows[0];
       }
+    });
+};
+
+exports.fetchReviewComments = (review_id) => {
+  return db
+    .query(
+      `
+  SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC;
+  `,
+      [review_id]
+    )
+    .then((result) => {
+      return result.rows;
     });
 };
 

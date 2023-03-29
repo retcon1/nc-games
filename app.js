@@ -4,6 +4,7 @@ const { getCategories } = require("./controllers/categories.controllers");
 const {
   getReviewById,
   getAllReviews,
+  getReviewComments,
 } = require("./controllers/reviews.controllers");
 const {
   handle404Errors,
@@ -17,6 +18,8 @@ app.get("/api/categories", getCategories);
 app.get("/api/reviews/:review_id", getReviewById);
 
 app.get("/api/reviews", getAllReviews);
+
+app.get('/api/reviews/:review_id/comments', getReviewComments)
 
 app.use(handle404Errors)
 
