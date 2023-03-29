@@ -21,7 +21,7 @@ exports.fetchAllReviews = () => {
   const reviews = db.query(
     `
     SELECT reviews.review_id, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer,
-    COUNT(comments.comment_id) AS comment_count
+    COUNT(comments.comment_id)::INT AS comment_count
     FROM reviews
     LEFT JOIN comments
     ON reviews.review_id = comments.review_id
@@ -31,8 +31,6 @@ exports.fetchAllReviews = () => {
   );
   return reviews.then((result) => {
     const reviews = result.rows;
-    //can map through to turn every string comment_count into a number
-    reviews.map(review => review.comment_count = +review.comment_count)
     return reviews;
   });
 };
