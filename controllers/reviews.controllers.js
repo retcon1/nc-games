@@ -3,6 +3,7 @@ const {
   fetchReviewComments,
   fetchAllReviews,
   addComment,
+  alterVotes,
 } = require("../models/reviews.models");
 const { checkForReview } = require("../models/utils");
 
@@ -44,6 +45,18 @@ exports.postComment = (req, res, next) => {
   addComment(review_id, comment)
     .then((postedComment) => {
       res.status(201).send({ postedComment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.changeVotes = (req, res, next) => {
+  const votes = req.body;
+  const { review_id } = req.params;
+  alterVotes(review_id, votes)
+    .then((updatedReview) => {
+      res.status(200).send({ updatedReview });
     })
     .catch((err) => {
       next(err);

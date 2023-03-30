@@ -94,3 +94,21 @@ exports.addComment = (review_id, comment) => {
     return postedComment;
   });
 };
+
+exports.alterVotes = (review_id, votes) => {
+  const voteNum = Number(votes.inc_votes);
+  return db
+    .query(
+      `
+    UPDATE reviews
+    SET votes = votes + $1
+    WHERE review_id = $2
+    RETURNING *;
+    `,
+      [voteNum, review_id]
+    )
+    .then((result) => {
+      const updatedReview = result.rows[0];
+      return updatedReview;
+    });
+};
