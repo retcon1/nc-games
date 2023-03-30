@@ -171,7 +171,9 @@ describe("/api/reviews/:review_id", () => {
         .send(votes)
         .expect(400)
         .then(({ body }) => {
-          expect(body).toEqual({ msg: "Must ONLY include an inc_votes key with a num value" });
+          expect(body).toEqual({
+            msg: "Must ONLY include an inc_votes key with a num value",
+          });
         });
     });
   });
@@ -350,5 +352,40 @@ describe("/api/reviews", () => {
   });
   it("404 - responds with a not found error if there is a typo in the path", () => {
     return request(app).get("/api/reveiws").expect(404);
+  });
+});
+
+describe("/api/comments", () => {
+  describe("DELETE /api/comments/:comment_id", () => {
+    it("DELETE 204 - responds with no content and deletes the given comment", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        })
+        .then(() => {
+          return db.query(`SELECT * FROM comments`);
+        })
+        .then(({ rows }) => {
+          expect(rows[0].comment_id).not.toBe(1);
+        });
+    });
+  });
+  it("ERROR 400 - responds with an error if given an ID that is not a number", () => {
+    return request(app)
+      .delete("/api/comments/notAnId")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid ID" });
+      });
+  });
+  it("ERROR 404 - responds with an error if given an ID that does not exist", () => {
+    return request(app)
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Comment Not Found" });
+      });
   });
 });

@@ -15,6 +15,7 @@ const {
   handlePsqlErrors,
   handleOtherErrors,
 } = require("./controllers/error-handling.controllers");
+const { deleteComment } = require("./controllers/comments.controllers");
 
 app.use(express.json());
 
@@ -29,6 +30,8 @@ app.get("/api/reviews/:review_id/comments", getReviewComments);
 app.post("/api/reviews/:review_id/comments", postComment);
 
 app.patch("/api/reviews/:review_id", changeVotes);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.use(handle404Errors);
 

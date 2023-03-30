@@ -1,6 +1,5 @@
 const db = require("../db/connection");
 const format = require("pg-format");
-const { checkForReview } = require("./utils");
 
 exports.fetchReviewById = (review_id) => {
   return db
@@ -23,7 +22,10 @@ exports.fetchReviewComments = (review_id) => {
   return db
     .query(
       `
-  SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC;
+  SELECT * 
+  FROM comments 
+  WHERE review_id = $1 
+  ORDER BY created_at DESC;
   `,
       [review_id]
     )
