@@ -16,6 +16,8 @@ const {
   handleOtherErrors,
 } = require("./controllers/error-handling.controllers");
 const { getAllUsers } = require("./controllers/users.controllers");
+const { deleteComment } = require("./controllers/comments.controllers");
+
 
 app.use(express.json());
 
@@ -32,6 +34,8 @@ app.post("/api/reviews/:review_id/comments", postComment);
 app.patch("/api/reviews/:review_id", changeVotes);
 
 app.get("/api/users", getAllUsers)
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.use(handle404Errors);
 

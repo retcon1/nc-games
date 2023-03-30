@@ -355,6 +355,7 @@ describe("/api/reviews", () => {
   });
 });
 
+
 describe("/api/users", () => {
   describe("GET /api/users", () => {
     it("GET 200 - responds with an array of objects with all of the users", () => {
@@ -375,5 +376,38 @@ describe("/api/users", () => {
     it("404 - responds with a not found error if there is a typo in the path", () => {
       return request(app).get("/api/cetagories").expect(404);
     });
+
+describe("/api/comments", () => {
+  describe("DELETE /api/comments/:comment_id", () => {
+    it("DELETE 204 - responds with no content and deletes the given comment", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        })
+        .then(() => {
+          return db.query(`SELECT * FROM comments WHERE comment_id = 1`);
+        })
+        .then(({ rows }) => {
+          expect(rows).toEqual([]);
+        });
+    });
+  });
+  it("ERROR 400 - responds with an error if given an ID that is not a number", () => {
+    return request(app)
+      .delete("/api/comments/notAnId")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid ID" });
+      });
+  });
+  it("ERROR 404 - responds with an error if given an ID that does not exist", () => {
+    return request(app)
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Comment Not Found" });
+      });
   });
 });

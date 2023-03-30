@@ -1,10 +1,6 @@
 const db = require("../db/connection");
 
 exports.checkForReview = (id) => {
-  // if (typeof +id !== "number") {
-  //   console.log(id)
-  //   return Promise.reject({ status: 404, msg: "Invalid ID" });
-  // }
   return db
     .query(
       `
