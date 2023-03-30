@@ -34,19 +34,18 @@ exports.fetchReviewComments = (review_id) => {
     });
 };
 
-exports.fetchAllReviews = () => {
-  const reviews = db.query(
-    `
-    SELECT reviews.review_id, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer,
-    COUNT(comments.comment_id)::INT AS comment_count
-    FROM reviews
-    LEFT JOIN comments
-    ON reviews.review_id = comments.review_id
-    GROUP BY reviews.review_id
-    ORDER BY created_at DESC;
-    `
-  );
-  return reviews.then((result) => {
+exports.fetchAllReviews = (category, sort_by, order) => {
+  let reviewQueryStr = `
+  SELECT reviews.review_id, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer,
+  COUNT(comments.comment_id)::INT AS comment_count
+  FROM reviews
+  LEFT JOIN comments
+  ON reviews.review_id = comments.review_id`;
+  if (category) reviewQueryStr += ` WHERE category = '${category}'`;
+  reviewQueryStr += ` GROUP BY reviews.review_id`;
+  reviewQueryStr += ` ORDER BY ${sort_by || "created_at"} ${order || "DESC"}`;
+
+  return db.query(reviewQueryStr).then((result) => {
     const reviews = result.rows;
     return reviews;
   });
@@ -112,9 +111,7 @@ exports.alterVotes = (review_id, votes) => {
     });
   }
   const votesValue = Object.values(votes);
-  if (
-    typeof votesValue[0] !== "number"
-  ) {
+  if (typeof votesValue[0] !== "number") {
     return Promise.reject({
       status: 400,
       msg: "Must have a number value",

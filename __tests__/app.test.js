@@ -389,3 +389,26 @@ describe("/api/comments", () => {
       });
   });
 });
+
+describe("GET reviews with queries /api/reviews?category=someCategory", () => {
+  it("GET 200 - responds with reviews only in a certain category when given that query", () => {
+    return request(app)
+      .get("/api/reviews?category=social-deduction")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        reviews.forEach((review) => {
+          expect(review.category).toBe("social deduction");
+        });
+      });
+  });
+  it("GET 200 - responds with reviews only in a certain category when given that query", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toBeSortedBy("votes", { descending: true });
+      });
+  });
+});
