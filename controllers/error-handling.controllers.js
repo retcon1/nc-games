@@ -27,5 +27,5 @@ exports.handleCustomErrors = (err, req, res, next) => {
 };
 
 exports.handleOtherErrors = (err, req, res, next) => {
-  console.log(err.code, err.status);
+  console.log(err);
 };

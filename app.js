@@ -6,6 +6,7 @@ const {
   getAllReviews,
   getReviewComments,
   postComment,
+  changeVotes,
 } = require("./controllers/reviews.controllers");
 const {
   handle404Errors,
@@ -26,6 +27,8 @@ app.get("/api/reviews", getAllReviews);
 app.get("/api/reviews/:review_id/comments", getReviewComments);
 
 app.post("/api/reviews/:review_id/comments", postComment);
+
+app.patch("/api/reviews/:review_id", changeVotes);
 
 app.use(handle404Errors);
 

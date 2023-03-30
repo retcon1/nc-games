@@ -52,16 +52,16 @@ exports.fetchAllReviews = () => {
 
 exports.addComment = (review_id, comment) => {
   const commentKeys = Object.keys(comment);
-  if (!commentKeys.includes("username") && !commentKeys.includes("body")) {
-    return Promise.reject({
-      status: 400,
-      msg: "Must include a username and body",
-    });
-  }
   if (commentKeys.length > 2) {
     return Promise.reject({
       status: 400,
       msg: "Must ONLY include a username and body",
+    });
+  }
+  if (!commentKeys.includes("username") && !commentKeys.includes("body")) {
+    return Promise.reject({
+      status: 400,
+      msg: "Must include a username and body",
     });
   }
   const commentValues = Object.values(comment);
@@ -93,4 +93,44 @@ exports.addComment = (review_id, comment) => {
     const postedComment = result.rows[0];
     return postedComment;
   });
+};
+
+exports.alterVotes = (review_id, votes) => {
+  const votesKey = Object.keys(votes);
+  if (votesKey.length > 1) {
+    return Promise.reject({
+      status: 400,
+      msg: "Must ONLY include an inc_votes key with a num value",
+    });
+  }
+  if (!votesKey.includes("inc_votes")) {
+    return Promise.reject({
+      status: 400,
+      msg: "Must have a key of inc_votes",
+    });
+  }
+  const votesValue = Object.values(votes);
+  if (
+    typeof votesValue[0] !== "number"
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: "Must have a number value",
+    });
+  }
+  const voteNum = Number(votes.inc_votes);
+  return db
+    .query(
+      `
+    UPDATE reviews
+    SET votes = votes + $1
+    WHERE review_id = $2
+    RETURNING *;
+    `,
+      [voteNum, review_id]
+    )
+    .then((result) => {
+      const updatedReview = result.rows[0];
+      return updatedReview;
+    });
 };

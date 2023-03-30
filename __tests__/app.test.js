@@ -29,39 +29,151 @@ describe("/api/categories", () => {
 });
 
 describe("/api/reviews/:review_id", () => {
-  it("GET 200 - responds with a review object containing all the appropriate properties", () => {
-    return request(app)
-      .get("/api/reviews/2")
-      .expect(200)
-      .then(({ body }) => {
-        const { review } = body;
-        expect(review).toBeInstanceOf(Object);
-        expect(review.review_id).toBe(2);
-        expect(review).toHaveProperty("title", expect.any(String));
-        expect(review).toHaveProperty("designer", expect.any(String));
-        expect(review).toHaveProperty("owner", expect.any(String));
-        expect(review).toHaveProperty("review_img_url", expect.any(String));
-        expect(review).toHaveProperty("review_body", expect.any(String));
-        expect(review).toHaveProperty("category", expect.any(String));
-        expect(review).toHaveProperty("created_at", expect.any(String));
-        expect(review).toHaveProperty("votes", expect.any(Number));
-      });
+  describe("GET requests", () => {
+    it("GET 200 - responds with a review object containing all the appropriate properties", () => {
+      return request(app)
+        .get("/api/reviews/2")
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          expect(review).toBeInstanceOf(Object);
+          expect(review.review_id).toBe(2);
+          expect(review).toHaveProperty("title", expect.any(String));
+          expect(review).toHaveProperty("designer", expect.any(String));
+          expect(review).toHaveProperty("owner", expect.any(String));
+          expect(review).toHaveProperty("review_img_url", expect.any(String));
+          expect(review).toHaveProperty("review_body", expect.any(String));
+          expect(review).toHaveProperty("category", expect.any(String));
+          expect(review).toHaveProperty("created_at", expect.any(String));
+          expect(review).toHaveProperty("votes", expect.any(Number));
+        });
+    });
+    it("404 - responds with an error if given an ID that does not exist", () => {
+      return request(app)
+        .get("/api/reviews/9999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "ID Not Found" });
+        });
+    });
+    it("400 - responds with an error if given an ID that is not a number", () => {
+      return request(app)
+        .get("/api/reviews/notAnId")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "Invalid ID" });
+        });
+    });
   });
-  it("404 - responds with an error if given an ID that does not exist", () => {
-    return request(app)
-      .get("/api/reviews/9999")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body).toEqual({ msg: "ID Not Found" });
-      });
-  });
-  it("400 - responds with an error if given an ID that is not a number", () => {
-    return request(app)
-      .get("/api/reviews/notAnId")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body).toEqual({ msg: "Invalid ID" });
-      });
+  describe("PATCH requests", () => {
+    it("PATCH 200 - responds with the review object updated to the accurate amount of votes increased", () => {
+      const votes = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(votes)
+        .expect(200)
+        .then(({ body }) => {
+          const { updatedReview } = body;
+          expect(updatedReview).toBeInstanceOf(Object);
+          expect(updatedReview.review_id).toBe(1);
+          expect(updatedReview.votes).toBe(2);
+          expect(updatedReview).toHaveProperty("title", expect.any(String));
+          expect(updatedReview).toHaveProperty("designer", expect.any(String));
+          expect(updatedReview).toHaveProperty("owner", expect.any(String));
+          expect(updatedReview).toHaveProperty(
+            "review_img_url",
+            expect.any(String)
+          );
+          expect(updatedReview).toHaveProperty(
+            "review_body",
+            expect.any(String)
+          );
+          expect(updatedReview).toHaveProperty("category", expect.any(String));
+          expect(updatedReview).toHaveProperty(
+            "created_at",
+            expect.any(String)
+          );
+        });
+    });
+    it("PATCH 200 - responds with the review object updated to the accurate amount of votes decreased", () => {
+      const votes = { inc_votes: -1 };
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(votes)
+        .expect(200)
+        .then(({ body }) => {
+          const { updatedReview } = body;
+          expect(updatedReview).toBeInstanceOf(Object);
+          expect(updatedReview.review_id).toBe(1);
+          expect(updatedReview.votes).toBe(0);
+          expect(updatedReview).toHaveProperty("title", expect.any(String));
+          expect(updatedReview).toHaveProperty("designer", expect.any(String));
+          expect(updatedReview).toHaveProperty("owner", expect.any(String));
+          expect(updatedReview).toHaveProperty(
+            "review_img_url",
+            expect.any(String)
+          );
+          expect(updatedReview).toHaveProperty(
+            "review_body",
+            expect.any(String)
+          );
+          expect(updatedReview).toHaveProperty("category", expect.any(String));
+          expect(updatedReview).toHaveProperty(
+            "created_at",
+            expect.any(String)
+          );
+        });
+    });
+    it("ERROR 404 - responds with an error if given an ID that does not exist", () => {
+      const votes = { inc_votes: -1 };
+      return request(app)
+        .patch("/api/reviews/9999")
+        .send(votes)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "Review Not Found" });
+        });
+    });
+    it("ERROR 400 - responds with an error if given an ID that is not a number", () => {
+      const votes = { inc_votes: -1 };
+      return request(app)
+        .patch("/api/reviews/notAnId")
+        .send(votes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "Invalid ID" });
+        });
+    });
+    it("ERROR 400 - responds with an error if the vote doesn't have the key of inc_votes", () => {
+      const votes = { not_votes: 1 };
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(votes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "Must have a key of inc_votes" });
+        });
+    });
+    it("ERROR 400 - responds with an error if the vote doesn't have a number value", () => {
+      const votes = { inc_votes: "not_a_vote" };
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(votes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "Must have a number value" });
+        });
+    });
+    it("ERROR 400 - responds with an error if the vote doesn't have a number value", () => {
+      const votes = { inc_votes: 1, notNeeded: 10 };
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(votes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "Must ONLY include an inc_votes key with a num value" });
+        });
+    });
   });
 });
 
