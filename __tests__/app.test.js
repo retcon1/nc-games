@@ -130,7 +130,7 @@ describe("/api/reviews/review_id/comments", () => {
             expect.any(Number)
           );
           expect(postedComment).toHaveProperty("body", expect.any(String));
-          expect(postedComment).toHaveProperty("review_id", expect.any(Number));
+          expect(postedComment.review_id).toBe(1);
           expect(postedComment).toHaveProperty("author", expect.any(String));
           expect(postedComment).toHaveProperty("votes", expect.any(Number));
           expect(postedComment).toHaveProperty(
@@ -190,6 +190,22 @@ describe("/api/reviews/review_id/comments", () => {
         .then(({ body }) => {
           expect(body).toEqual({
             msg: "The username and body must be a string",
+          });
+        });
+    });
+    it("ERROR 400 - responds with an error if the comment has more than just username & body keys", () => {
+      const comment = {
+        username: "mallionaire",
+        body: "This is my new comment!",
+        notNeeded: "Why is this here?",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(comment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            msg: "Must ONLY include a username and body",
           });
         });
     });

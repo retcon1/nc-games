@@ -58,6 +58,12 @@ exports.addComment = (review_id, comment) => {
       msg: "Must include a username and body",
     });
   }
+  if (commentKeys.length > 2) {
+    return Promise.reject({
+      status: 400,
+      msg: "Must ONLY include a username and body",
+    });
+  }
   const commentValues = Object.values(comment);
   if (
     typeof commentValues[0] !== "string" &&
