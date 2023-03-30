@@ -365,10 +365,10 @@ describe("/api/comments", () => {
           expect(body).toEqual({});
         })
         .then(() => {
-          return db.query(`SELECT * FROM comments`);
+          return db.query(`SELECT * FROM comments WHERE comment_id = 1`);
         })
         .then(({ rows }) => {
-          expect(rows[0].comment_id).not.toBe(1);
+          expect(rows).toEqual([]);
         });
     });
   });
