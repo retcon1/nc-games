@@ -54,9 +54,9 @@ exports.postComment = (req, res, next) => {
 exports.changeVotes = (req, res, next) => {
   const votes = req.body;
   const { review_id } = req.params;
-  alterVotes(review_id, votes)
+  Promise.all([alterVotes(review_id, votes), checkForReview(review_id)])
     .then((updatedReview) => {
-      res.status(200).send({ updatedReview });
+      res.status(200).send({ updatedReview: updatedReview[0] });
     })
     .catch((err) => {
       next(err);
