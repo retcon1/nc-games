@@ -171,7 +171,9 @@ describe("/api/reviews/:review_id", () => {
         .send(votes)
         .expect(400)
         .then(({ body }) => {
-          expect(body).toEqual({ msg: "Must ONLY include an inc_votes key with a num value" });
+          expect(body).toEqual({
+            msg: "Must ONLY include an inc_votes key with a num value",
+          });
         });
     });
   });
@@ -350,5 +352,28 @@ describe("/api/reviews", () => {
   });
   it("404 - responds with a not found error if there is a typo in the path", () => {
     return request(app).get("/api/reveiws").expect(404);
+  });
+});
+
+describe("/api/users", () => {
+  describe("GET /api/users", () => {
+    it("GET 200 - responds with an array of objects with all of the users", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          const {users} = body
+          expect(users).toBeInstanceOf(Array);
+          expect(users).toHaveLength(4);
+          users.forEach((user) => {
+            expect(user).toHaveProperty("username", expect.any(String));
+            expect(user).toHaveProperty("name", expect.any(String));
+            expect(user).toHaveProperty("avatar_url", expect.any(String));
+          });
+        });
+    });
+    it("404 - responds with a not found error if there is a typo in the path", () => {
+      return request(app).get("/api/cetagories").expect(404);
+    });
   });
 });
