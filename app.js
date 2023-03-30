@@ -12,9 +12,10 @@ const {
   handle500Errors,
   handleCustomErrors,
   handlePsqlErrors,
+  handleOtherErrors,
 } = require("./controllers/error-handling.controllers");
 
-app.use(express.json())
+app.use(express.json());
 
 app.get("/api/categories", getCategories);
 
@@ -33,5 +34,7 @@ app.use(handle500Errors);
 app.use(handlePsqlErrors);
 
 app.use(handleCustomErrors);
+
+app.use(handleOtherErrors);
 
 module.exports = app;

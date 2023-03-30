@@ -125,12 +125,72 @@ describe("/api/reviews/review_id/comments", () => {
         .expect(201)
         .then(({ body }) => {
           const { postedComment } = body;
-          expect(postedComment).toHaveProperty("comment_id", expect.any(Number))
-          expect(postedComment).toHaveProperty("body", expect.any(String))
-          expect(postedComment).toHaveProperty("review_id", expect.any(Number))
-          expect(postedComment).toHaveProperty("author", expect.any(String))
-          expect(postedComment).toHaveProperty("votes", expect.any(Number))
-          expect(postedComment).toHaveProperty("created_at", expect.any(String))
+          expect(postedComment).toHaveProperty(
+            "comment_id",
+            expect.any(Number)
+          );
+          expect(postedComment).toHaveProperty("body", expect.any(String));
+          expect(postedComment).toHaveProperty("review_id", expect.any(Number));
+          expect(postedComment).toHaveProperty("author", expect.any(String));
+          expect(postedComment).toHaveProperty("votes", expect.any(Number));
+          expect(postedComment).toHaveProperty(
+            "created_at",
+            expect.any(String)
+          );
+        });
+    });
+    it("ERROR 400 - responds with an error if given an ID that is not a number", () => {
+      const comment = {
+        username: "mallionaire",
+        body: "This is my new comment!",
+      };
+      return request(app)
+        .post("/api/reviews/notAnId/comments")
+        .send(comment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "Invalid ID" });
+        });
+    });
+    it("ERROR 404 - responds with an error if given an ID that does not exist", () => {
+      const comment = {
+        username: "mallionaire",
+        body: "This is my new comment!",
+      };
+      return request(app)
+        .post("/api/reviews/9999/comments")
+        .send(comment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "Invalid ID" });
+        });
+    });
+    it("ERROR 400 - responds with an error if the comment doesn't have the keys of username and body", () => {
+      const comment = {
+        noName: "mallionaire",
+        unbody: "This is my new comment!",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(comment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "Must include a username and body" });
+        });
+    });
+    it("ERROR 400 - responds with an error if the comment doesn't have values which are strings", () => {
+      const comment = {
+        username: 1290,
+        body: 999,
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(comment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            msg: "The username and body must be a string",
+          });
         });
     });
   });
