@@ -9,7 +9,4 @@ exports.removeComment = (comment_id) => {
         `,
       [comment_id]
     )
-    .then((result) => {
-      if (result.rows.length === 0) return {};
-    });
 };
