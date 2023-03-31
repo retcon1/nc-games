@@ -423,3 +423,69 @@ describe("/api/comments", () => {
       });
   });
 });
+
+describe("GET reviews with queries /api/reviews?category=someCategory", () => {
+  it("GET 200 - responds with reviews only in a certain category when given that query", () => {
+    return request(app)
+      .get("/api/reviews?category=social+deduction")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).not.toHaveLength(0);
+        reviews.forEach((review) => {
+          expect(review.category).toBe("social deduction");
+        });
+      });
+  });
+  it("GET 200 - responds with reviews sorted by a certain a property of reviews", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toBeSortedBy("votes", { descending: true });
+      });
+  });
+  it("GET 200 - responds with reviews ordered by ascending if given an order query", () => {
+    return request(app)
+      .get("/api/reviews?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toBeSortedBy("created_at", { descending: false });
+      });
+  });
+  it("GET 200 - responds with an empty array when given a valid category with no reviews", () => {
+    return request(app)
+      .get("/api/reviews?category=children's+games")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toEqual([]);
+      });
+  });
+  it("ERROR 400 - responds with a 400 error when given an invalid order", () => {
+    return request(app)
+      .get("/api/reviews?order=notAnOrder")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid Order Query" });
+      });
+  });
+  it("ERROR 400 - responds with a 400 error when given an invalid sort_by", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=review_body")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid Sort Query" });
+      });
+  });
+  it("ERROR 404 - responds with a 404 error when given an invalid category", () => {
+    return request(app)
+      .get("/api/reviews?category=noCategory")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Category Not Found" });
+      });
+  });
+});
