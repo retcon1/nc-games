@@ -5,7 +5,14 @@ exports.fetchReviewById = (review_id) => {
   return db
     .query(
       `
-      SELECT * FROM reviews WHERE review_id = $1;
+      SELECT reviews.review_id, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.review_body, reviews.votes, reviews.designer,
+      COUNT(comments.comment_id)::INT AS comment_count
+      FROM reviews
+      LEFT JOIN comments
+      ON reviews.review_id = comments.review_id
+      WHERE reviews.review_id = $1
+      GROUP BY reviews.review_id
+      ORDER BY created_at DESC
       `,
       [review_id]
     )
@@ -112,9 +119,7 @@ exports.alterVotes = (review_id, votes) => {
     });
   }
   const votesValue = Object.values(votes);
-  if (
-    typeof votesValue[0] !== "number"
-  ) {
+  if (typeof votesValue[0] !== "number") {
     return Promise.reject({
       status: 400,
       msg: "Must have a number value",
