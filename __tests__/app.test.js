@@ -56,7 +56,7 @@ describe("/api/reviews/:review_id", () => {
           const { review } = body;
           expect(review).toBeInstanceOf(Object);
           expect(review.review_id).toBe(2);
-          expect(review.comment_count).toBe(3)
+          expect(review.comment_count).toBe(3);
         });
     });
     it("404 - responds with an error if given an ID that does not exist", () => {
@@ -366,7 +366,6 @@ describe("/api/reviews", () => {
   });
 });
 
-
 describe("/api/users", () => {
   describe("GET /api/users", () => {
     it("GET 200 - responds with an array of objects with all of the users", () => {
@@ -374,7 +373,7 @@ describe("/api/users", () => {
         .get("/api/users")
         .expect(200)
         .then(({ body }) => {
-          const {users} = body
+          const { users } = body;
           expect(users).toBeInstanceOf(Array);
           expect(users).toHaveLength(4);
           users.forEach((user) => {
@@ -387,6 +386,8 @@ describe("/api/users", () => {
     it("404 - responds with a not found error if there is a typo in the path", () => {
       return request(app).get("/api/cetagories").expect(404);
     });
+  });
+});
 
 describe("/api/comments", () => {
   describe("DELETE /api/comments/:comment_id", () => {
