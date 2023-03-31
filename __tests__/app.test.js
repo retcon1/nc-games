@@ -431,7 +431,6 @@ describe("/api", () => {
       .get("/api")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         expect(body).toEqual(endpoints);
       });
   });
