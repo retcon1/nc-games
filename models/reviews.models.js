@@ -41,8 +41,21 @@ exports.fetchAllReviews = (category, sort_by, order) => {
   FROM reviews
   LEFT JOIN comments
   ON reviews.review_id = comments.review_id`;
-  if (category) reviewQueryStr += ` WHERE category = $1`;
+  if (category) {
+    reviewQueryStr += ` WHERE category = $1`;
+  }
   reviewQueryStr += ` GROUP BY reviews.review_id`;
+  if (order && !["asc", "desc"].includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid Order Query" });
+  }
+  if (
+    sort_by &&
+    !["title", "designer", "owner", "category", "created_at", "votes"].includes(
+      sort_by
+    )
+  ) {
+    return Promise.reject({ status: 400, msg: "Invalid Sort Query" });
+  }
   reviewQueryStr += ` ORDER BY ${sort_by || "created_at"} ${order || "DESC"}`;
 
   return db

@@ -435,15 +435,15 @@ describe("GET reviews with queries /api/reviews?category=someCategory", () => {
       .get("/api/reviews?order=notAnOrder")
       .expect(400)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "Invalid Query" });
+        expect(body).toEqual({ msg: "Invalid Order Query" });
       });
   });
   it("ERROR 400 - responds with a 400 error when given an invalid sort_by", () => {
     return request(app)
-      .get("/api/reviews?sort_by=notValidSort")
+      .get("/api/reviews?sort_by=review_body")
       .expect(400)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "Invalid Query" });
+        expect(body).toEqual({ msg: "Invalid Sort Query" });
       });
   });
   it("ERROR 404 - responds with a 404 error when given an invalid category", () => {
