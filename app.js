@@ -17,13 +17,11 @@ const {
 } = require("./controllers/error-handling.controllers");
 const { getAllUsers } = require("./controllers/users.controllers");
 const { deleteComment } = require("./controllers/comments.controllers");
-const endpoints = require("./endpoints.json");
+const { getEndpoints } = require("./controllers/api.controllers");
 
 app.use(express.json());
 
-app.get("/api", (req, res) => {
-  res.status(200).send(endpoints);
-});
+app.get("/api", getEndpoints);
 
 app.get("/api/categories", getCategories);
 
