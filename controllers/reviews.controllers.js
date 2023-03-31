@@ -5,12 +5,16 @@ const {
   addComment,
   alterVotes,
 } = require("../models/reviews.models");
-const { checkForReview } = require("../models/utils");
+const { checkForReview, checkForCategory } = require("../models/utils");
 
 exports.getAllReviews = (req, res, next) => {
-  fetchAllReviews()
+  const { category, sort_by, order } = req.query;
+  Promise.all([
+    fetchAllReviews(category, sort_by, order),
+    checkForCategory(category),
+  ])
     .then((reviews) => {
-      res.status(200).send({ reviews });
+      res.status(200).send({ reviews: reviews[0] });
     })
     .catch((err) => {
       next(err);
