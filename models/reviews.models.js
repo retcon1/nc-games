@@ -100,17 +100,16 @@ exports.addComment = (review_id, comment) => {
   const valuesArray = [+review_id];
   valuesArray.push(commentValues);
   const formattedComment = valuesArray.flat();
-  //needed to nest for pg-format to work, don't actually need pg-format but nice as a future reference
-  const nestedComment = [formattedComment];
   const addingComment = format(
     `
-  INSERT INTO comments
+    INSERT INTO comments
     (review_id, author, body)
-  VALUES
+    VALUES
     %L
-  RETURNING *;
-  `,
-    nestedComment
+    RETURNING *;
+    `,
+    //needed to nest for pg-format to work, don't actually need pg-format but nice as a future reference
+    [formattedComment]
   );
   return db.query(addingComment).then((result) => {
     const postedComment = result.rows[0];
