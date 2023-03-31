@@ -17,7 +17,9 @@ describe("/api", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body).toEqual(endpoints);
-
+      });
+  });
+});
 describe("/api/categories", () => {
   it("GET 200 - responds with an array of category objects with properties of slug & description", () => {
     return request(app)
