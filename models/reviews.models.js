@@ -41,14 +41,16 @@ exports.fetchAllReviews = (category, sort_by, order) => {
   FROM reviews
   LEFT JOIN comments
   ON reviews.review_id = comments.review_id`;
-  if (category) reviewQueryStr += ` WHERE category = '${category}'`;
+  if (category) reviewQueryStr += ` WHERE category = $1`;
   reviewQueryStr += ` GROUP BY reviews.review_id`;
   reviewQueryStr += ` ORDER BY ${sort_by || "created_at"} ${order || "DESC"}`;
 
-  return db.query(reviewQueryStr).then((result) => {
-    const reviews = result.rows;
-    return reviews;
-  });
+  return db
+    .query(reviewQueryStr, category ? [category] : null)
+    .then((result) => {
+      const reviews = result.rows;
+      return reviews;
+    });
 };
 
 exports.addComment = (review_id, comment) => {
