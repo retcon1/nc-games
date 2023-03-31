@@ -48,6 +48,17 @@ describe("/api/reviews/:review_id", () => {
           expect(review).toHaveProperty("votes", expect.any(Number));
         });
     });
+    it("GET 200 - responds with a review object now containing a comment count", () => {
+      return request(app)
+        .get("/api/reviews/2")
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          expect(review).toBeInstanceOf(Object);
+          expect(review.review_id).toBe(2);
+          expect(review.comment_count).toBe(3)
+        });
+    });
     it("404 - responds with an error if given an ID that does not exist", () => {
       return request(app)
         .get("/api/reviews/9999")
