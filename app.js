@@ -17,9 +17,11 @@ const {
 } = require("./controllers/error-handling.controllers");
 const { getAllUsers } = require("./controllers/users.controllers");
 const { deleteComment } = require("./controllers/comments.controllers");
-
+const { getEndpoints } = require("./controllers/api.controllers");
 
 app.use(express.json());
+
+app.get("/api", getEndpoints);
 
 app.get("/api/categories", getCategories);
 
@@ -33,7 +35,7 @@ app.post("/api/reviews/:review_id/comments", postComment);
 
 app.patch("/api/reviews/:review_id", changeVotes);
 
-app.get("/api/users", getAllUsers)
+app.get("/api/users", getAllUsers);
 
 app.delete("/api/comments/:comment_id", deleteComment);
 
