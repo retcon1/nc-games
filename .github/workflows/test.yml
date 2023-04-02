@@ -12,7 +12,7 @@ jobs:
       - name: Say Hello
         run: echo 'Hello everyone from the pipleline!'
   
-  tests:
+  test-app:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and Clone Repo
@@ -21,5 +21,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Test app
-        run: npm run test
+      - name: Setup Postgres
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql db: test_db
+          postgresql user: testerson
+          postgresql password: pass123
+
+      - name: Create databases
+
+      - name: Test App
+        run: PGDATABASE=test_db PGUSER=testerson PGPASSWORD=pass123 npm run test
