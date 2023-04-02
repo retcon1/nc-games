@@ -33,8 +33,8 @@ jobs:
 
   test-app-staging-db:
     needs: test-app
-     runs-on: ubuntu-latest
-     steps:
+    runs-on: ubuntu-latest
+    steps:
       - name: Checkout and Clone Repo
         uses: actions/checkout@v3
 
