@@ -1,0 +1,13 @@
+name: Unit and Integration Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  greeting: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say Hello
+        run: echo 'Hello everyone from the pipleline!'
