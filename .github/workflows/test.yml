@@ -1,0 +1,45 @@
+name: Unit and Integration Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  greeting: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say Hello
+        run: echo 'Hello everyone from the pipleline!'
+  
+  test-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout and Clone Repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Setup Postgres
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql db: test_db
+          postgresql user: testerson
+          postgresql password: pass123
+
+      - name: Test App
+        run: PGDATABASE=test_db PGUSER=testerson PGPASSWORD=pass123 npm run test
+
+  test-app-staging-db:
+    needs: test-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout and Clone Repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Test App
+        run: NODE_ENV=production DB_URL=${{ secrets.DB_URL }} npm run test
