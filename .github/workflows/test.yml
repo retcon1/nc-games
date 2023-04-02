@@ -30,3 +30,16 @@ jobs:
 
       - name: Test App
         run: PGDATABASE=test_db PGUSER=testerson PGPASSWORD=pass123 npm run test
+
+  test-app-staging-db:
+    needs: test-app
+     runs-on: ubuntu-latest
+     steps:
+      - name: Checkout and Clone Repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Test App
+        run: NODE_ENV=production DB_URL=${{ secrets.DB_URL }} npm run test
