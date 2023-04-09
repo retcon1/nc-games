@@ -15,7 +15,7 @@ const {
   handlePsqlErrors,
   handleOtherErrors,
 } = require("./controllers/error-handling.controllers");
-const { getAllUsers } = require("./controllers/users.controllers");
+const { getAllUsers, getUser } = require("./controllers/users.controllers");
 const { deleteComment } = require("./controllers/comments.controllers");
 const { getEndpoints } = require("./controllers/api.controllers");
 
@@ -36,6 +36,8 @@ app.post("/api/reviews/:review_id/comments", postComment);
 app.patch("/api/reviews/:review_id", changeVotes);
 
 app.get("/api/users", getAllUsers);
+
+app.get("/api/users/:username", getUser);
 
 app.delete("/api/comments/:comment_id", deleteComment);
 
