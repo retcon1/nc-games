@@ -500,3 +500,29 @@ describe("GET reviews with queries /api/reviews?category=someCategory", () => {
       });
   });
 });
+
+describe("/api/users/:username", () => {
+  it("GET 200 - responds with an object with the username, avatar_url and name", () => {
+    return request(app)
+      .get("/api/users/mallionaire")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          user: {
+            username: "mallionaire",
+            name: "haz",
+            avatar_url:
+              "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+          },
+        });
+      });
+  });
+  it("ERROR 404 - responds with a 404 error when given a user that doesn't exist", () => {
+    return request(app)
+      .get("/api/users/userDoesNotExist")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "User Not Found" });
+      });
+  });
+});
