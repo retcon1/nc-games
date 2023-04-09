@@ -16,7 +16,7 @@ const {
   handleOtherErrors,
 } = require("./controllers/error-handling.controllers");
 const { getAllUsers, getUser } = require("./controllers/users.controllers");
-const { deleteComment } = require("./controllers/comments.controllers");
+const { deleteComment, changeComVotes } = require("./controllers/comments.controllers");
 const { getEndpoints } = require("./controllers/api.controllers");
 
 app.use(express.json());
@@ -40,6 +40,8 @@ app.get("/api/users", getAllUsers);
 app.get("/api/users/:username", getUser);
 
 app.delete("/api/comments/:comment_id", deleteComment);
+
+app.patch("/api/comments/:comment_id", changeComVotes);
 
 app.use(handle404Errors);
 
