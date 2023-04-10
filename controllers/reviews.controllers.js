@@ -4,6 +4,7 @@ const {
   fetchAllReviews,
   addComment,
   alterVotes,
+  addReview,
 } = require("../models/reviews.models");
 const { checkForReview, checkForCategory } = require("../models/utils");
 
@@ -61,6 +62,19 @@ exports.changeVotes = (req, res, next) => {
   Promise.all([alterVotes(review_id, votes), checkForReview(review_id)])
     .then((updatedReview) => {
       res.status(200).send({ updatedReview: updatedReview[0] });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postReview = (req, res, next) => {
+  const review = req.body;
+  const { category } = review;
+  Promise.all([addReview(review), checkForCategory(category)])
+    .then((result) => {
+      const postedReview = result[0];
+      res.status(201).send({ postedReview });
     })
     .catch((err) => {
       next(err);
