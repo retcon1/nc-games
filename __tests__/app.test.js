@@ -317,7 +317,7 @@ describe("/api/reviews/review_id/comments", () => {
     it("ERROR 400 - responds with an error if the comment doesn't have values which are strings", () => {
       const comment = {
         username: 1290,
-        body: 999,
+        body: "999",
       };
       return request(app)
         .post("/api/reviews/1/comments")
@@ -527,7 +527,7 @@ describe("/api/users/:username", () => {
   });
 });
 
-describe("PATCH requests", () => {
+describe("PATCH on comments", () => {
   it("PATCH 200 - responds with the comment object updated to the accurate amount of votes decreased", () => {
     const votes = { inc_votes: 1 };
     return request(app)
@@ -612,4 +612,92 @@ describe("PATCH requests", () => {
         });
       });
   });
-});
+
+
+describe("POST review", () => {
+  it("POST 201 - posts a new review when given a valid object, responds with the added review with its review_id and comment_count added", () => {
+    const review = {
+      title: "Jenga2",
+      designer: "Ben Lucas",
+      owner: "mallionaire",
+      review_img_url:
+        "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+      review_body: "Capitalist fun for the whole family!",
+      category: "dexterity",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(review)
+      .expect(201)
+      .then(({ body }) => {
+        const { postedReview } = body;
+        expect(postedReview).toHaveProperty("review_id", expect.any(Number));
+        expect(postedReview).toHaveProperty("title", expect.any(String));
+        expect(postedReview).toHaveProperty("designer", expect.any(String));
+        expect(postedReview).toHaveProperty("owner", expect.any(String));
+        expect(postedReview).toHaveProperty("review_img_url", expect.any(String));
+        expect(postedReview).toHaveProperty("review_body", expect.any(String));
+        expect(postedReview).toHaveProperty("votes", expect.any(Number));
+        expect(postedReview).toHaveProperty("created_at", expect.any(String));
+        expect(postedReview).toHaveProperty("comment_count", expect.any(Number));
+      });
+  });
+  });
+    it("RROR 400 - responds with an error if the review has values which are not strings", () => {
+      const review = {
+        title: "Jenga2",
+        designer: 3000,
+        owner: 123,
+        review_img_url:
+          "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+        review_body: "Capitalist fun for the whole family!",
+        category: "dexterity",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(review)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "ALL entered values must be strings" });
+        });
+    });
+    it("ERROR 400 - responds with an error if the review has invalid keys", () => {
+      const review = {
+        title: "Jenga2",
+        invalidKey: "Ben Lucas",
+        owner: "mallionaire",
+        review_img_url:
+          "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+        review_body: "Capitalist fun for the whole family!",
+        category: "dexterity",
+      };
+      return request(app)
+        .post("/api/reviews/")
+        .send(review)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "Must include a title, designer, owner, review_img_url, review_body and category" });
+        });
+    });
+    it("ERROR 400 - responds with an error if the review has more more than the required number of keys/values", () => {
+      const review = {
+        title: "Jenga2",
+        designer: "Ben Lucas",
+        owner: "mallionaire",
+        review_img_url:
+          "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+        review_body: "Capitalist fun for the whole family!",
+        category: "dexterity",
+        notNeeded: "shouldn't be here"
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(review)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            msg: "Must ONLY include a title, designer, owner, review_img_url, review_body and category",
+          });
+        });
+    });
+  });

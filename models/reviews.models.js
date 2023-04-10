@@ -81,7 +81,7 @@ exports.addComment = (review_id, comment) => {
       msg: "Must ONLY include a username and body",
     });
   }
-  if (!commentKeys.includes("username") && !commentKeys.includes("body")) {
+  if (!commentKeys.includes("username") || !commentKeys.includes("body")) {
     return Promise.reject({
       status: 400,
       msg: "Must include a username and body",
@@ -89,7 +89,7 @@ exports.addComment = (review_id, comment) => {
   }
   const commentValues = Object.values(comment);
   if (
-    typeof commentValues[0] !== "string" &&
+    typeof commentValues[0] !== "string" ||
     typeof commentValues[1] !== "string"
   ) {
     return Promise.reject({
@@ -152,5 +152,76 @@ exports.alterVotes = (review_id, votes) => {
     .then((result) => {
       const updatedReview = result.rows[0];
       return updatedReview;
+    });
+};
+
+exports.addReview = (review) => {
+  const reviewKeys = Object.keys(review);
+  if (reviewKeys.length > 6) {
+    return Promise.reject({
+      status: 400,
+      msg: "Must ONLY include a title, designer, owner, review_img_url, review_body and category",
+    });
+  }
+  if (
+    !reviewKeys.includes("title") ||
+    !reviewKeys.includes("designer") ||
+    !reviewKeys.includes("owner") ||
+    !reviewKeys.includes("review_body") ||
+    !reviewKeys.includes("review_img_url") ||
+    !reviewKeys.includes("category")
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: "Must include a title, designer, owner, review_img_url, review_body and category",
+    });
+  }
+  const reviewValues = Object.values(review);
+  for (let i = 0; i < reviewValues.length; i++) {
+    if (typeof reviewValues[i] !== "string") {
+      return Promise.reject({
+        status: 400,
+        msg: "ALL entered values must be strings",
+      });
+    }
+  }
+  return db
+    .query(
+      `
+    INSERT INTO reviews
+    (title, designer, owner, review_img_url, review_body, category)
+    VALUES
+    ($1, $2, $3, $4, $5, $6)
+    RETURNING *;
+    `,
+      [
+        reviewValues[0],
+        reviewValues[1],
+        reviewValues[2],
+        reviewValues[3],
+        reviewValues[4],
+        reviewValues[5],
+      ]
+    )
+    .then((result) => {
+      const postedreview = result.rows[0];
+      const review_id = postedreview.review_id;
+      return db.query(
+        `
+      SELECT reviews.review_id, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.review_body, reviews.votes, reviews.designer,
+      COUNT(comments.comment_id)::INT AS comment_count
+      FROM reviews
+      LEFT JOIN comments
+      ON reviews.review_id = comments.review_id
+      WHERE reviews.review_id = $1
+      GROUP BY reviews.review_id
+      ORDER BY created_at DESC
+      `,
+        [review_id]
+      );
+    })
+    .then((result) => {
+      const reviewWithCommentCount = result.rows[0];
+      return reviewWithCommentCount;
     });
 };
