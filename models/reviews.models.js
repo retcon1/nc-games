@@ -41,17 +41,22 @@ exports.fetchReviewComments = (review_id) => {
     });
 };
 
-exports.fetchAllReviews = (category, sort_by, order) => {
+exports.fetchAllReviews = (category, sort_by, order, limit, p) => {
+  //Base Query - calculates comment count for each review & total count of all reviews
   let reviewQueryStr = `
   SELECT reviews.review_id, reviews.owner, reviews.title, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer,
-  COUNT(comments.comment_id)::INT AS comment_count
+  COUNT(comments.comment_id)::INT AS comment_count,
+  COUNT (*) OVER ()::INT AS total_count
   FROM reviews
   LEFT JOIN comments
   ON reviews.review_id = comments.review_id`;
+
   if (category) {
     reviewQueryStr += ` WHERE category = $1`;
   }
   reviewQueryStr += ` GROUP BY reviews.review_id`;
+
+  //Checking to see if each query is valid
   if (order && !["asc", "desc"].includes(order)) {
     return Promise.reject({ status: 400, msg: "Invalid Order Query" });
   }
@@ -63,7 +68,17 @@ exports.fetchAllReviews = (category, sort_by, order) => {
   ) {
     return Promise.reject({ status: 400, msg: "Invalid Sort Query" });
   }
+  if (limit && isNaN(limit)) {
+    return Promise.reject({ status: 400, msg: "Invalid Limit Query" });
+  }
+  if (p && isNaN(p)) {
+    return Promise.reject({ status: 400, msg: "Invalid Page Query" });
+  }
+
+  //making the rest of the query after passing tests
   reviewQueryStr += ` ORDER BY ${sort_by || "created_at"} ${order || "DESC"}`;
+  reviewQueryStr += ` OFFSET ${(limit || 10) * (p - 1) || 0}`;
+  reviewQueryStr += ` LIMIT ${limit || 10}`;
 
   return db
     .query(reviewQueryStr, category ? [category] : null)

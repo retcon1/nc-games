@@ -9,9 +9,9 @@ const {
 const { checkForReview, checkForCategory } = require("../models/utils");
 
 exports.getAllReviews = (req, res, next) => {
-  const { category, sort_by, order } = req.query;
+  const { category, sort_by, order, limit, p } = req.query;
   Promise.all([
-    fetchAllReviews(category, sort_by, order),
+    fetchAllReviews(category, sort_by, order, limit, p),
     checkForCategory(category),
   ])
     .then((reviews) => {
