@@ -87,7 +87,7 @@ describe("/api/reviews/:review_id", () => {
         });
     });
   });
-  describe("PATCH requests", () => {
+  describe("PATCH review", () => {
     it("PATCH 200 - responds with the review object updated to the accurate amount of votes increased", () => {
       const votes = { inc_votes: 1 };
       return request(app)
@@ -249,7 +249,7 @@ describe("/api/reviews/review_id/comments", () => {
         });
     });
   });
-  describe("POST", () => {
+  describe("POST comment", () => {
     it("POST 201 - posts a new comment when given a valid object with username and body properties", () => {
       const comment = {
         username: "mallionaire",
@@ -349,14 +349,14 @@ describe("/api/reviews/review_id/comments", () => {
 });
 
 describe("/api/reviews", () => {
-  it("GET 200 - should respond with an array of review objects with all the appropriate properties", () => {
+  it("GET 200 - should respond with an array of 10 review objects with all the appropriate properties when given no query", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
         expect(reviews).toBeInstanceOf(Array);
-        expect(reviews).toHaveLength(13);
+        expect(reviews).toHaveLength(10);
         reviews.forEach((review) => {
           expect(review).toHaveProperty("review_id", expect.any(Number));
           expect(review).toHaveProperty("title", expect.any(String));
@@ -367,6 +367,7 @@ describe("/api/reviews", () => {
           expect(review).toHaveProperty("created_at", expect.any(String));
           expect(review).toHaveProperty("votes", expect.any(Number));
           expect(review).toHaveProperty("comment_count", expect.any(Number));
+          expect(review.total_count).toBe(13);
           if (review.review_id === 3) expect(review.comment_count).toBe(3);
         });
         expect(reviews).toBeSortedBy("created_at", { descending: true });
@@ -435,7 +436,7 @@ describe("/api/comments", () => {
   });
 });
 
-describe("GET reviews with queries /api/reviews?category=someCategory", () => {
+describe("GET reviews with queries", () => {
   it("GET 200 - responds with reviews only in a certain category when given that query", () => {
     return request(app)
       .get("/api/reviews?category=social+deduction")
@@ -475,6 +476,24 @@ describe("GET reviews with queries /api/reviews?category=someCategory", () => {
         expect(reviews).toEqual([]);
       });
   });
+  it("GET 200 - responds with an array of reviews limited by the given limit query", () => {
+    return request(app)
+      .get("/api/reviews?limit=12")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews.length).toBe(12);
+      });
+  });
+  it("GET 200 - responds with an array of reviews starting at the second page if given a p query of 2", () => {
+    return request(app)
+      .get("/api/reviews?p=2")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews.length).toBe(3);
+      });
+  });
   it("ERROR 400 - responds with a 400 error when given an invalid order", () => {
     return request(app)
       .get("/api/reviews?order=notAnOrder")
@@ -497,6 +516,22 @@ describe("GET reviews with queries /api/reviews?category=someCategory", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body).toEqual({ msg: "Category Not Found" });
+      });
+  });
+  it("ERROR 400 - responds with a 400 error when given a limit which isn't a number", () => {
+    return request(app)
+      .get("/api/reviews?limit=notANumber")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid Limit Query" });
+      });
+  });
+  it("ERROR 400 - responds with a 400 error when given a page which isn't a number", () => {
+    return request(app)
+      .get("/api/reviews?p=notANumber")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid Page Query" });
       });
   });
 });
@@ -613,73 +648,8 @@ describe("PATCH on comments", () => {
       });
   });
 
-
-describe("POST review", () => {
-  it("POST 201 - posts a new review when given a valid object, responds with the added review with its review_id and comment_count added", () => {
-    const review = {
-      title: "Jenga2",
-      designer: "Ben Lucas",
-      owner: "mallionaire",
-      review_img_url:
-        "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
-      review_body: "Capitalist fun for the whole family!",
-      category: "dexterity",
-    };
-    return request(app)
-      .post("/api/reviews")
-      .send(review)
-      .expect(201)
-      .then(({ body }) => {
-        const { postedReview } = body;
-        expect(postedReview).toHaveProperty("review_id", expect.any(Number));
-        expect(postedReview).toHaveProperty("title", expect.any(String));
-        expect(postedReview).toHaveProperty("designer", expect.any(String));
-        expect(postedReview).toHaveProperty("owner", expect.any(String));
-        expect(postedReview).toHaveProperty("review_img_url", expect.any(String));
-        expect(postedReview).toHaveProperty("review_body", expect.any(String));
-        expect(postedReview).toHaveProperty("votes", expect.any(Number));
-        expect(postedReview).toHaveProperty("created_at", expect.any(String));
-        expect(postedReview).toHaveProperty("comment_count", expect.any(Number));
-      });
-  });
-  });
-    it("RROR 400 - responds with an error if the review has values which are not strings", () => {
-      const review = {
-        title: "Jenga2",
-        designer: 3000,
-        owner: 123,
-        review_img_url:
-          "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
-        review_body: "Capitalist fun for the whole family!",
-        category: "dexterity",
-      };
-      return request(app)
-        .post("/api/reviews")
-        .send(review)
-        .expect(400)
-        .then(({ body }) => {
-          expect(body).toEqual({ msg: "ALL entered values must be strings" });
-        });
-    });
-    it("ERROR 400 - responds with an error if the review has invalid keys", () => {
-      const review = {
-        title: "Jenga2",
-        invalidKey: "Ben Lucas",
-        owner: "mallionaire",
-        review_img_url:
-          "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
-        review_body: "Capitalist fun for the whole family!",
-        category: "dexterity",
-      };
-      return request(app)
-        .post("/api/reviews/")
-        .send(review)
-        .expect(400)
-        .then(({ body }) => {
-          expect(body).toEqual({ msg: "Must include a title, designer, owner, review_img_url, review_body and category" });
-        });
-    });
-    it("ERROR 400 - responds with an error if the review has more more than the required number of keys/values", () => {
+  describe("POST review", () => {
+    it("POST 201 - posts a new review when given a valid object, responds with the added review with its review_id and comment_count added", () => {
       const review = {
         title: "Jenga2",
         designer: "Ben Lucas",
@@ -688,16 +658,91 @@ describe("POST review", () => {
           "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
         review_body: "Capitalist fun for the whole family!",
         category: "dexterity",
-        notNeeded: "shouldn't be here"
       };
       return request(app)
         .post("/api/reviews")
         .send(review)
-        .expect(400)
+        .expect(201)
         .then(({ body }) => {
-          expect(body).toEqual({
-            msg: "Must ONLY include a title, designer, owner, review_img_url, review_body and category",
-          });
+          const { postedReview } = body;
+          expect(postedReview).toHaveProperty("review_id", expect.any(Number));
+          expect(postedReview).toHaveProperty("title", expect.any(String));
+          expect(postedReview).toHaveProperty("designer", expect.any(String));
+          expect(postedReview).toHaveProperty("owner", expect.any(String));
+          expect(postedReview).toHaveProperty(
+            "review_img_url",
+            expect.any(String)
+          );
+          expect(postedReview).toHaveProperty(
+            "review_body",
+            expect.any(String)
+          );
+          expect(postedReview).toHaveProperty("votes", expect.any(Number));
+          expect(postedReview).toHaveProperty("created_at", expect.any(String));
+          expect(postedReview).toHaveProperty(
+            "comment_count",
+            expect.any(Number)
+          );
         });
     });
   });
+  it("RROR 400 - responds with an error if the review has values which are not strings", () => {
+    const review = {
+      title: "Jenga2",
+      designer: 3000,
+      owner: 123,
+      review_img_url:
+        "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+      review_body: "Capitalist fun for the whole family!",
+      category: "dexterity",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(review)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "ALL entered values must be strings" });
+      });
+  });
+  it("ERROR 400 - responds with an error if the review has invalid keys", () => {
+    const review = {
+      title: "Jenga2",
+      invalidKey: "Ben Lucas",
+      owner: "mallionaire",
+      review_img_url:
+        "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+      review_body: "Capitalist fun for the whole family!",
+      category: "dexterity",
+    };
+    return request(app)
+      .post("/api/reviews/")
+      .send(review)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "Must include a title, designer, owner, review_img_url, review_body and category",
+        });
+      });
+  });
+  it("ERROR 400 - responds with an error if the review has more more than the required number of keys/values", () => {
+    const review = {
+      title: "Jenga2",
+      designer: "Ben Lucas",
+      owner: "mallionaire",
+      review_img_url:
+        "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+      review_body: "Capitalist fun for the whole family!",
+      category: "dexterity",
+      notNeeded: "shouldn't be here",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(review)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "Must ONLY include a title, designer, owner, review_img_url, review_body and category",
+        });
+      });
+  });
+});

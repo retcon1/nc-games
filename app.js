@@ -17,7 +17,10 @@ const {
   handleOtherErrors,
 } = require("./controllers/error-handling.controllers");
 const { getAllUsers, getUser } = require("./controllers/users.controllers");
-const { deleteComment, changeComVotes } = require("./controllers/comments.controllers");
+const {
+  deleteComment,
+  changeComVotes,
+} = require("./controllers/comments.controllers");
 const { getEndpoints } = require("./controllers/api.controllers");
 
 app.use(express.json());

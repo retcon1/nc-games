@@ -53,4 +53,4 @@ exports.alterComVotes = (comment_id, votes) => {
       const updatedReview = result.rows[0];
       return updatedReview;
     });
-}
+};
