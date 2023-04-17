@@ -1,7 +1,7 @@
 # Northcoders House of Games API
 
 Find the hosted version of this API here:
-https://nc-games-783o.onrender.com
+https://nc-games-783o.onrender.com/api
 
 Summary:
 
