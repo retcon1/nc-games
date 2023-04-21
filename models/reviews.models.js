@@ -62,9 +62,15 @@ exports.fetchAllReviews = (category, sort_by, order, limit, p) => {
   }
   if (
     sort_by &&
-    !["title", "designer", "owner", "category", "created_at", "votes"].includes(
-      sort_by
-    )
+    ![
+      "title",
+      "designer",
+      "owner",
+      "category",
+      "created_at",
+      "votes",
+      "comment_count",
+    ].includes(sort_by)
   ) {
     return Promise.reject({ status: 400, msg: "Invalid Sort Query" });
   }
