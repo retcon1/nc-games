@@ -13,7 +13,7 @@ To run this code:
 
 - Type 'npm install' in the terminal to install all the necessary dependencies 
 
-- Type 'npm setup-dbs' in the terminal to setup your databases
+- Type 'npm run setup-dbs' in the terminal to setup your databases
 
 - Type 'npm run seed' in the terminal to seed your databases
 
