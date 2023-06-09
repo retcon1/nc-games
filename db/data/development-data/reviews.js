@@ -55,7 +55,7 @@ module.exports = [
     review_body:
       "Ever wish you could try your hand at mixing potions? Quacks of Quedlinburg will have you mixing up a homebrew like no other. Each player buys different ingredients (chips) that are drawn at random to reach the most points, but watch out, you'd better not let your cauldrom explode.",
     category: "push-your-luck",
-    created_at: new Date(1610964101253),
+    created_at: new Date(1610964101257),
     votes: 10,
   },
   {
@@ -67,7 +67,7 @@ module.exports = [
     review_body:
       "Cold rain pours on the faces of your team of cyclists, you pulled to the front of the pack early and now your taking on exhaustion cards like there is not tomorrow, you think there are about 2 hands left until you cross the finish line, will you draw enough from your deck to cross before the other team shoot passed? Flamee Rouge is a Racing deck management game where you carefully manage your deck in order to cross the line before your opponents, cyclist can fall slyly behind front runners in their slipstreams to save precious energy for the prefect moment to burst into the lead ",
     category: "deck-building",
-    created_at: new Date(1610964101254),
+    created_at: new Date(1610964101256),
     votes: 10,
   },
   {
