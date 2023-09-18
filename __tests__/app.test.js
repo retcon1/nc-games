@@ -686,7 +686,7 @@ describe("PATCH on comments", () => {
         });
     });
   });
-  it("RROR 400 - responds with an error if the review has values which are not strings", () => {
+  it("ERROR 400 - responds with an error if the review has values which are not strings", () => {
     const review = {
       title: "Jenga2",
       designer: 3000,
