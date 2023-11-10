@@ -12,5 +12,3 @@ exports.fetchCategories = () => {
       return categories;
     });
 };
-
-

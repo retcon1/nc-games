@@ -216,12 +216,12 @@ exports.addReview = (review) => {
     RETURNING *;
     `,
       [
-        reviewValues[0],
-        reviewValues[1],
-        reviewValues[2],
-        reviewValues[3],
-        reviewValues[4],
-        reviewValues[5],
+        review.title,
+        review.designer,
+        review.owner,
+        review.review_img_url,
+        review.review_body,
+        review.category,
       ]
     )
     .then((result) => {
